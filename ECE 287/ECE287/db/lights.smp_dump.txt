@@ -1,0 +1,10 @@
+
+State Machine - |lights|x
+Name x.G x.F x.E x.D x.C x.B x.A 
+x.A 0 0 0 0 0 0 0 
+x.B 0 0 0 0 0 1 1 
+x.C 0 0 0 0 1 0 1 
+x.D 0 0 0 1 0 0 1 
+x.E 0 0 1 0 0 0 1 
+x.F 0 1 0 0 0 0 1 
+x.G 1 0 0 0 0 0 1 

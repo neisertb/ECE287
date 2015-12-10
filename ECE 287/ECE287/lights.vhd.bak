@@ -1,0 +1,148 @@
+LIBRARY ieee ;
+USE ieee.std_logic_1164.all ; 
+ENTITY lights IS
+	PORT ( Clock, Resetn, r0,g0,b0: IN STD_LOGIC ;
+				serial,a1,b1,c1,d1,e1,f1,g1: OUT STD_LOGIC ) ;
+END lights ;
+
+ARCHITECTURE Behavior OF lights IS 
+	TYPE State_type IS (A, B, C, D,E,F,G) ; 
+	SIGNAL x : State_type := A;
+	SIGNAL count : integer :=0;
+	SIGNAL timer1 : integer :=18;
+	SIGNAL timer2 : integer :=40;
+	SIGNAL timer3 : integer :=35;
+	SIGNAL timer4 : integer :=30;
+	SIGNAL timer5 : integer :=2500;
+	SIGNAL cycle : integer :=0;
+	SIGNAL bits : integer :=0;
+	SIGNAl vectorR : STD_LOGIC_VECTOR(7 downto 0);
+	SIGNAl vectorG : STD_LOGIC_VECTOR(7 downto 0);
+	SIGNAl vectorB : STD_LOGIC_VECTOR(7 downto 0);
+BEGIN
+	PROCESS ( Resetn, Clock )
+		
+		BEGIN
+			
+			vectorR(0)<=r0; vectorR(7)<='0'; vectorR(6)<='0';vectorR(5)<='0'; vectorR(4)<='0';vectorR(3)<='0'; vectorR(2)<='0';vectorR(1)<='0';
+			vectorG(0)<=g0; vectorG(7)<='0'; vectorG(6)<='0';vectorG(5)<='0'; vectorG(4)<='0';vectorG(3)<='0'; vectorG(2)<='0';vectorG(1)<='0';
+			vectorB(0)<=b0; vectorB(7)<='0'; vectorB(6)<='0';vectorB(5)<='0'; vectorB(4)<='0';vectorB(3)<='0'; vectorB(2)<='0';vectorB(1)<='0';
+			if(Clock'EVENT AND Clock = '1')THEN
+			
+			count<=count+1;
+				CASE x IS
+					WHEN A =>
+					a1<='1';
+						serial<='1';
+						if(vectorR(bits)='0')THEN
+							if(count = timer1)THEN
+							x<=B;count<=0;a1<='0';END IF;
+						ELSE
+							if(count = timer2)THEN
+							x<=B;count<=0;a1<='0';END IF;
+						END IF;
+					WHEN B =>
+					b1<='1';
+						serial<= '0';
+						if(vectorR(bits)='0')THEN
+							if(count = timer3)THEN
+								bits <=bits +1; 
+								
+								if(bits=7)THEN bits<=0;
+									x<=d;b1<='0';
+								ELSE x<=A;b1<='0';
+								END IF;
+							count<=0;
+							END IF;
+						ELSE
+							if(count = timer4)THEN
+								bits <=bits +1;
+								
+								if(bits=7)THEN bits<=0; x<=D;b1<='0';
+								ELSE x<=A;b1<='0';
+								END IF;
+							count<=0;
+							END IF;
+						END IF;
+							
+					WHEN C =>
+					c1<='1';
+						serial<='0';
+						if (cycle=240)THEN
+							if(count = timer5)THEN
+								x<=A;count<=0; cycle <= 0; c1<='0';END IF;
+						ELSE	x<=A; count<=0;c1<='0';END IF;
+						
+					WHEN D =>
+					d1<='1';
+						serial<='1';
+						if(vectorG(bits)='0')THEN
+							if(count = timer1)THEN
+							x<=E;count<=0;d1<='0';END IF;
+						ELSE
+							if(count = timer2)THEN
+							x<=E;count<=0;d1<='0';END IF;
+						END IF;
+					WHEN E =>
+					e1<='1';
+						serial<= '0';
+						if(vectorG(bits)='0')THEN
+							if(count = timer3)THEN
+								bits <=bits +1; 
+								
+								if(bits=7)THEN bits<=0;
+									x<=F;e1<='0';
+								ELSE x<=D;e1<='0';
+								END IF;
+							count<=0;
+							END IF;
+						ELSE
+							if(count = timer4)THEN
+								bits <=bits +1;
+								
+								if(bits=7)THEN bits<=0; x<=F;e1<='0';
+								ELSE x<=D;e1<='0';
+								END IF;
+							count<=0;
+							END IF;
+						END IF;
+						
+					WHEN F =>
+					f1<='1';
+						serial<='1';
+						if(vectorB(bits)='0')THEN
+							if(count = timer1)THEN
+							x<=G;count<=0;END IF;f1<='0';
+						ELSE
+							if(count = timer2)THEN
+							x<=G;count<=0;f1<='0';END IF;
+						END IF;
+					WHEN G =>
+					g1<='1';
+						serial<= '0';
+						if(vectorB(bits)='0')THEN
+							if(count = timer3)THEN
+								bits <=bits +1; 
+								
+								if(bits=7)THEN bits<=0;
+									x<=c;cycle <=cycle+1;g1<='0';
+								ELSE x<=F;g1<='0';
+								END IF;
+							count<=0;
+							END IF;
+						ELSE
+							if(count = timer4)THEN
+								bits <=bits +1;
+								
+								if(bits=7)THEN bits<=0; x<=c;cycle <=cycle+1;g1<='0';
+								ELSE x<=F;g1<='0';
+								END IF;
+							count<=0;
+							END IF;
+						END IF;
+					END CASE;
+				END IF;
+		
+		END PROCESS;
+			
+	END Behavior;
